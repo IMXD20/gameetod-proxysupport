@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import uuid
 import time
 import asyncio
@@ -81,6 +82,16 @@ class GameeTod:
         return data / 1000000
 
     async def http(self, url, data=None):
+        retry = 0
+
+        proxy_list = open("proxy.txt").read().splitlines()
+        proxy = proxy_list[random.randint(0, len(proxy_list) - 1)].strip()
+
+        self.ses.proxies = {
+            "http://": proxy,
+            "https://": proxy,
+        }
+
         while True:
             try:
                 if not os.path.exists("http.log"):
@@ -104,6 +115,11 @@ class GameeTod:
                 return res
             except (hatetepe.TimeoutException, hatetepe.NetworkError):
                 self.log(f"{merah}connection error / connection timeout !")
+            finally:
+                retry += 1
+                if retry > 3:
+                    self.log(f"{merah}maximum retry reached !")
+                    return 'Request failed'
 
     async def login(self, tg_data):
         data = {
