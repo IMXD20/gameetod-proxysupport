@@ -11,4 +11,5 @@ sessions
 !requirements.txt
 !config.json
 !tokens.json
+!proxy.txt
 __pycache__
